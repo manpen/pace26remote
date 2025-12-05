@@ -5,9 +5,11 @@ edition = "2024"
 license = "GPL-3.0-or-later"
 
 [features]
-upload = ["reqwest"]
+upload = ["dep:reqwest", "dep:url"]
 
 [dependencies]
+thiserror = "2.0.17"
+
 pace26checker = { git = "https://github.com/manpen/pace26checker.git", features = ["with_digest"] }
 pace26io = { version = "0.1.0", path = "../pace26io" }
 
@@ -15,4 +17,4 @@ serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.145"
 
 reqwest = { version = "0.12.24", features = ["json"], optional = true }
-thiserror = "2.0.17"
+url = { version = "2.5.7", optional = true }

@@ -1,7 +1,9 @@
 use crate::job_description::JobDescription;
-use reqwest::{ClientBuilder, Url};
+use crate::job_transfer::TransferToServer;
+use reqwest::{ClientBuilder, IntoUrl, Url};
 use std::collections::BinaryHeap;
 use thiserror::Error;
+use url::ParseError;
 
 const MAX_DESC_PER_UPLOAD: usize = 100;
 const MAX_EST_SIZE_PER_UPLOAD: usize = 5_000_000;
@@ -10,6 +12,9 @@ const MAX_EST_SIZE_PER_UPLOAD: usize = 5_000_000;
 pub enum UploadError {
     #[error(transparent)]
     Reqwest(#[from] reqwest::Error),
+
+    #[error(transparent)]
+    ParseError(#[from] ParseError),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -25,12 +30,19 @@ pub struct Upload {
 }
 
 impl Upload {
-    pub fn new_with_server(url: Url) -> Self {
-        Self {
+    pub fn new_with_server(into_url: impl IntoUrl) -> Result<Self, UploadError> {
+        let url = into_url.into_url()?.join("/api/solution")?;
+        Self::new_with_endpoint(url)
+    }
+
+    pub fn new_with_endpoint(into_url: impl IntoUrl) -> Result<Self, UploadError> {
+        let url = into_url.into_url()?;
+
+        Ok(Self {
             url,
             descriptions: BinaryHeap::with_capacity(1000),
             size_estimate: 0,
-        }
+        })
     }
 
     pub fn add_job(&mut self, desc: JobDescription) {
