@@ -79,19 +79,20 @@ impl Upload {
         Ok(())
     }
 
-    fn build_payload(&mut self) -> Vec<JobDescription> {
-        let mut content = Vec::with_capacity(self.descriptions.len().min(MAX_DESC_PER_UPLOAD));
+    fn build_payload(&mut self) -> TransferToServer {
+        let mut jobs = Vec::with_capacity(self.descriptions.len().min(MAX_DESC_PER_UPLOAD));
         let mut est_size = 0;
 
-        while est_size < MAX_EST_SIZE_PER_UPLOAD && content.len() < MAX_DESC_PER_UPLOAD {
+        while est_size < MAX_EST_SIZE_PER_UPLOAD && jobs.len() < MAX_DESC_PER_UPLOAD {
             if let Some(job) = self.descriptions.pop() {
-                content.push(job.desc);
+                jobs.push(job.desc);
                 est_size += job.size;
                 self.size_estimate -= job.size;
             } else {
                 break;
             }
         }
-        content
+
+        TransferToServer { jobs }
     }
 }
