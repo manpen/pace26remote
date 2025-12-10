@@ -1,26 +1,30 @@
 use pace26checker::checks::bin_tree_with_parent::NodeCursor;
-use pace26checker::io::digest::digest_solution;
+use pace26checker::io::digest::{DigestString, digest_solution};
 use pace26io::newick::NewickWriter;
 use serde::{Deserialize, Serialize};
 use std::time::Duration;
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
-enum JobResult {
-    Valid { solution: String, sdigest: String },
+pub enum JobResult {
+    Valid {
+        score: u32,
+        solution: String,
+        sdigest: DigestString,
+    },
     Infeasible,
     Timeout,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub struct JobDescription {
-    idigest: String,
-    result: JobResult,
-    runtime: Option<Duration>,
+    pub idigest: DigestString,
+    pub result: JobResult,
+    pub runtime: Option<Duration>,
 }
 
 impl JobDescription {
     pub fn valid(
-        idigest: String,
+        idigest: DigestString,
         trees: Vec<NodeCursor>,
         runtime: Option<Duration>,
     ) -> JobDescription {
@@ -37,11 +41,15 @@ impl JobDescription {
         JobDescription {
             idigest,
             runtime,
-            result: JobResult::Valid { sdigest, solution },
+            result: JobResult::Valid {
+                score,
+                sdigest,
+                solution,
+            },
         }
     }
 
-    pub fn timeout(idigest: String, runtime: Duration) -> JobDescription {
+    pub fn timeout(idigest: DigestString, runtime: Duration) -> JobDescription {
         JobDescription {
             idigest,
             result: JobResult::Timeout,
@@ -49,7 +57,7 @@ impl JobDescription {
         }
     }
 
-    pub fn infeasible(idigest: String, runtime: Option<Duration>) -> JobDescription {
+    pub fn infeasible(idigest: DigestString, runtime: Option<Duration>) -> JobDescription {
         JobDescription {
             idigest,
             result: JobResult::Infeasible,
@@ -71,8 +79,8 @@ mod tests {
     use super::*;
     use pace26checker::io::digest::DIGEST_HEX_DIGITS;
 
-    fn dummy_digest() -> String {
-        std::iter::repeat_n("0", DIGEST_HEX_DIGITS).collect()
+    fn dummy_digest() -> DigestString {
+        DigestString::new(std::iter::repeat_n("0", DIGEST_HEX_DIGITS).collect()).unwrap()
     }
 
     #[test]
