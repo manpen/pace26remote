@@ -74,7 +74,8 @@ impl Upload {
             .danger_accept_invalid_certs(true)
             .build()?;
 
-        client.post(self.url.clone()).json(&payload).send().await?;
+        let response = client.post(self.url.clone()).json(&payload).send().await?;
+        println!("response: {}", response.text().await?);
 
         Ok(())
     }
