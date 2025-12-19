@@ -24,10 +24,19 @@ impl JobDescription {
         trees: Vec<NodeCursor>,
         runtime: Option<Duration>,
     ) -> JobDescription {
-        let score = trees.len() as u32;
-
         // compute newick strings and sort by size
         let mut newick: Vec<_> = trees.into_iter().map(|t| t.to_newick_string()).collect();
+        Self::valid_from_strings(idigest, &mut newick, runtime)
+    }
+
+    pub fn valid_from_strings(
+        idigest: InstanceDigest,
+        newick: &mut [String],
+        runtime: Option<Duration>,
+    ) -> JobDescription {
+        let score = newick.len() as u32;
+
+        // compute newick strings and sort by size
         newick.sort_unstable_by_key(|t| t.len());
         let solution = newick.join("\n");
 
