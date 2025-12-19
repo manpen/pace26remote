@@ -11,7 +11,7 @@ upload = ["dep:reqwest", "dep:url"]
 thiserror = "2.0.17"
 
 pace26checker = { git = "https://github.com/manpen/pace26checker.git", features = ["with_digest"] }
-pace26io = { version = "0.1.0", path = "../pace26io" }
+pace26io = { version = "0.1.0" }
 
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.145"
