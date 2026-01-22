@@ -71,7 +71,6 @@ impl Upload {
     async fn upload(&mut self) -> Result<(), UploadError> {
         let payload = self.build_payload();
         let client = ClientBuilder::new()
-            .danger_accept_invalid_certs(true)
             .build()?;
 
         let response = client.post(self.url.clone()).json(&payload).send().await?;

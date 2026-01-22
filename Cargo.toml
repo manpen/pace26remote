@@ -16,5 +16,5 @@ pace26io = { version = "0.1.0" }
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.145"
 
-reqwest = { version = "0.12.24", features = ["json", "rustls-tls", "charset", "system-proxy"], default-features = false, optional = true }
+reqwest = { version = "0.13.1", features = ["json", "charset", "system-proxy", "stream", "gzip"], optional = true }
 url = { version = "2.5.7", optional = true }
